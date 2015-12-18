@@ -9,9 +9,14 @@ public class ThirdPersonController : MonoBehaviour
     Vector3 optimalPositionP;
     public float distanceToObjectZ;
     public float distanceToObjectY;
+    float slerpfactor;
+    public float maxVel = 250f;
+    public float minSlerping = 0.1f;
+    Rigidbody rb;
 
     void Start()
     {
+        rb = focusPoint.GetComponent<Rigidbody>();
         optimalPositionR = new Quaternion();
         optimalPositionP = new Vector3();
     }
@@ -23,7 +28,15 @@ public class ThirdPersonController : MonoBehaviour
         optimalPositionR = focusPoint.transform.rotation;
         optimalPositionR *= Quaternion.Euler(new Vector3(10, 0, 0));
 
-        gameObject.transform.rotation = Quaternion.Slerp(gameObject.transform.rotation, optimalPositionR, 5 * Time.deltaTime);
-        gameObject.transform.position = Vector3.Slerp(gameObject.transform.position, optimalPositionP, 5 * Time.deltaTime);
+        //slerpfactor should be in [0.75, 1]
+        if (rb != null)
+        {
+            slerpfactor = minSlerping + (1f - minSlerping) * Mathf.Clamp(Mathf.Abs((Vector3.Magnitude(rb.velocity))) / maxVel, 0, 1f);
+            //Debug.Log("Slerpfactor: " + slerpfactor + "\tTime: " + Time.deltaTime);
+        }
+        else slerpfactor = 1f;
+
+        gameObject.transform.rotation = Quaternion.Slerp(gameObject.transform.rotation, optimalPositionR, slerpfactor);
+        gameObject.transform.position = Vector3.Slerp(gameObject.transform.position, optimalPositionP, slerpfactor);
     }
 }

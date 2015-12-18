@@ -32,7 +32,13 @@ public class Wheels : MonoBehaviour
         force = Vector3.zero;
         currentDistanceVector = PositionInVehicleSpace;
 
-        for (int i = 0; i < otherWheels.Length; i++ )
+
+
+        currentDistanceVectors = new Vector3[otherWheels.Length];
+        otherWheelRigidbodies = new Rigidbody[otherWheels.Length];
+        L_w = new float[otherWheels.Length];
+        l_w = new float[otherWheels.Length];
+        for (int i = 0; i < otherWheels.Length; i++)
         {
             otherWheelRigidbodies[i] = otherWheels[i].GetComponent<Rigidbody>();
             currentDistanceVectors[i] = otherWheels[i].transform.position - gameObject.transform.position;
